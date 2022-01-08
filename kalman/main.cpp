@@ -10,11 +10,10 @@
 
 int main() {
 	const float dt = 0.02;
-	const float g = 9.81;
 	const float uncertainty = 0.0392;
 
 	// State extrapolation matrix
-	Matrix F {
+	const Matrix F {
 			{1, 0, 0, dt, 0, 0, dt * dt / 2, 0, 0},
 			{0, 1, 0, 0, dt, 0, 0, dt * dt / 2, 0},
 			{0, 0, 1, 0, 0, dt, 0, 0, dt * dt / 2},
@@ -29,14 +28,14 @@ int main() {
 	// Process noise matrix is zero
 
 	// Observation matrix
-	Matrix H {
+	const Matrix H {
 			{0, 0, 0, 0, 0, 0, 1, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 1, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 1}
 	};
 
 	// Process uncertainty matrix
-	Matrix R {Matrix {
+	const Matrix R {Matrix {
 			{1, 0, 0},
 			{0, 1, 0},
 			{0, 0, 1}
@@ -56,17 +55,17 @@ int main() {
 	};
 
 	// Covariance matrix (estimate uncertainty)
-	Matrix P { Matrix {
+	Matrix P {
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 1, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 1, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 1}
-	} * uncertainty};
+			{0, 0, 0, 0, 0, 0, 500, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 500, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 500}
+	};
 
 	// Prediction
 	X = F * X;
@@ -83,6 +82,7 @@ int main() {
 		// Step 2 - Update
 		// Calculate Kalman gain
 		Matrix K {P * H.transpose() * (H * P * H.transpose() + R).invert()};
+		std::cout << "Kalman gain during iteration " << i + 1 << ": " << K << std::endl;
 
 		// Estimate current state
 		X = X + K * (Z - H * X);
