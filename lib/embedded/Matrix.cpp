@@ -15,7 +15,7 @@ Matrix::Matrix(size w, size h):
 
 
 Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& values):
-		_w {values.begin()->size()}, _h {values.size()} {
+		_w {static_cast<size>(values.begin()->size())}, _h {static_cast<size>(values.size())} {
 	for (const auto& row : values) {
 		std::vector<scalar> v {};
 		for (auto value: row) {
@@ -27,7 +27,7 @@ Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& value
 
 
 Matrix::Matrix(const std::vector<scalar>& vector):
-		_w {1}, _h {vector.size()} {
+		_w {1}, _h {static_cast<size>(vector.size())} {
 	for (size i {0}; i < vector.size(); ++i) {
 		_values.push_back(std::vector<scalar> {vector[i]});
 	}
@@ -35,7 +35,7 @@ Matrix::Matrix(const std::vector<scalar>& vector):
 
 
 Matrix::Matrix(const std::vector<std::vector<scalar>>& vector):
-		_w {vector.front().size()}, _h {vector.size()} {
+		_w {static_cast<size>(vector.front().size())}, _h {static_cast<size>(vector.size())} {
 	for (size i {0}; i < vector.size(); ++i) {
 		_values.emplace_back(vector[i]);
 	}
@@ -230,7 +230,7 @@ Matrix Matrix::concat(const Matrix& matrix) const {
 		return *this;
 	}
 
-	Matrix result {_w + matrix._w, _h};
+	Matrix result {static_cast<size>(_w + matrix._w), _h};
 
 	for (size j {0}; j < _h; ++j) {
 		for (size i {0}; i < _w; ++i) {

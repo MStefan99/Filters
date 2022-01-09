@@ -9,8 +9,8 @@
 #include <cstdint>
 
 
-typedef double scalar;
-typedef size_t size;
+typedef float scalar;
+typedef uint16_t size;
 
 
 class Matrix {
