@@ -17,7 +17,8 @@ typedef double scalar;
 
 class Matrix {
 public:
-	explicit Matrix(size_t w = 1, size_t h = 1);
+	Matrix() = default;
+	explicit Matrix(size_t w, size_t h);
 	explicit Matrix(const std::vector<scalar>& vector);
 	explicit Matrix(const std::vector<std::vector<scalar>>& vector);
 	Matrix(const std::initializer_list<std::initializer_list<scalar>>& list);
@@ -55,8 +56,8 @@ public:
 
 protected:
 	std::vector<std::vector<scalar>> _values {};
-	size_t _w {};
-	size_t _h {};
+	size_t _w {0};
+	size_t _h {0};
 };
 
 #endif //TRADER_MATRIX_H

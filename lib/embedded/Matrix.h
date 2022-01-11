@@ -15,7 +15,8 @@ typedef uint16_t size;
 
 class Matrix {
 public:
-	explicit Matrix(size w = 1, size h = 1);
+	Matrix() = default;
+	explicit Matrix(size w, size);
 	explicit Matrix(const std::vector<scalar>& vector);
 	explicit Matrix(const std::vector<std::vector<scalar>>& vector);
 	Matrix(const std::initializer_list<std::initializer_list<scalar>>& list);
@@ -48,8 +49,8 @@ public:
 
 protected:
 	std::vector<std::vector<scalar>> _values {};
-	size _w {};
-	size _h {};
+	size _w {0};
+	size _h {0};
 };
 
 #endif //TRADER_MATRIX_H

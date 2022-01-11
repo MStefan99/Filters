@@ -5,71 +5,56 @@
 #include <iostream>
 #include <vector>
 
-#include "Matrix.h"
+#include "Kalman.h"
 
 
 int main() {
 	const float dt = 0.02;
 	const float uncertainty = 0.0392;
 
-	// State extrapolation matrix
-	const Matrix F {
-			{1, 0, 0, dt, 0, 0, dt * dt / 2, 0, 0},
-			{0, 1, 0, 0, dt, 0, 0, dt * dt / 2, 0},
-			{0, 0, 1, 0, 0, dt, 0, 0, dt * dt / 2},
-			{0, 0, 0, 1, 0, 0, dt, 0, 0},
-			{0, 0, 0, 0, 1, 0, 0, dt, 0},
-			{0, 0, 0, 0, 0, 1, 0, 0, dt},
-			{0, 0, 0, 0, 0, 0, 1, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 1, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 1},
+	Kalman k {
+			{
+					{1, 0, 0, dt, 0, 0, dt * dt / 2, 0, 0},
+					{0, 1, 0, 0, dt, 0, 0, dt * dt / 2, 0},
+					{0, 0, 1, 0, 0, dt, 0, 0, dt * dt / 2},
+					{0, 0, 0, 1, 0, 0, dt, 0, 0},
+					{0, 0, 0, 0, 1, 0, 0, dt, 0},
+					{0, 0, 0, 0, 0, 1, 0, 0, dt},
+					{0, 0, 0, 0, 0, 0, 1, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 1, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 1},
+			},
+			Matrix {9, 9},
+			{Matrix {
+					{1, 0, 0},
+					{0, 1, 0},
+					{0, 0, 1}
+			} * uncertainty}
 	};
 
-	// Process noise matrix is zero
-
-	// Observation matrix
-	const Matrix H {
-			{0, 0, 0, 0, 0, 0, 1, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 1, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 1}
-	};
-
-	// Process uncertainty matrix
-	const Matrix R {Matrix {
-			{1, 0, 0},
-			{0, 1, 0},
-			{0, 0, 1}
-	} * uncertainty};
-
-	// System state
-	Matrix X = {
-			{0},  // x
-			{0},  // y
-			{0},  // z
-			{0},  // x'
-			{0},  // y'
-			{0},  // z'
-			{0},  // x''
-			{0},  // y''
-			{0}   // z''
-	};
-
-	// Covariance matrix (estimate uncertainty)
-	Matrix P {
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 0, 500, 0, 0},
-			{0, 0, 0, 0, 0, 0, 0, 500, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 500}
-	};
-
-	// Prediction
-	X = F * X;
-	P = F * P * F.transpose();  // + Q
+	k.init({
+					{0},  // x
+					{0},  // y
+					{0},  // z
+					{0},  // x'
+					{0},  // y'
+					{0},  // z'
+					{0},  // x''
+					{0},  // y''
+					{0}   // z''
+			},
+			{
+					{0, 0, 0, 0, 0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0},
+					{0, 0, 0, 0, 0, 0, 500, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 500, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 500}
+			}
+	);
 
 	for (size_t i {0}; i < 50; ++i) {
 		// Step 1 - Measure
@@ -79,23 +64,16 @@ int main() {
 				{5}
 		};
 
-		// Step 2 - Update
-		// Calculate Kalman gain
-		Matrix K {P * H.transpose() * (H * P * H.transpose() + R).invert()};
-		std::cout << "Kalman gain during iteration " << i + 1 << ": " << K << std::endl;
+		Matrix H {
+				{0, 0, 0, 0, 0, 0, 1, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 1, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0, 1}
+		};
 
-		// Estimate current state
-		X = X + K * (Z - H * X);
-		std::cout << "Estimated state during iteration " << i + 1 << ": " << X << std::endl;
-
-		// Update covariance
-		Matrix temp {K * H};
-		temp = Matrix::identity(temp.getHeight()) - temp;
-		P = temp * P * temp.transpose() + K * R * K.transpose();
-
-		// Step 3 - Predict
-		X = F * X;
-		P = F * P * F.transpose();  // + Q
+		k.predict();
+		k.correct(Z, H);
+		std::cout << "Covariance during iteration " << i + 1 << ": " << k.getCovariance() << std::endl;
+		std::cout << "Estimated state during iteration " << i + 1 << ": " << k.getState() << std::endl;
 	}
 
 	return 0;
