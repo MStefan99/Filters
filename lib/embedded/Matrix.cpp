@@ -14,10 +14,10 @@ Matrix::Matrix(size w, size h):
 }
 
 
-Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& values):
+Matrix::Matrix(const TL::initializer_list<TL::initializer_list<scalar>>& values):
 		_w {static_cast<size>(values.begin()->size())}, _h {static_cast<size>(values.size())} {
 	for (const auto& row : values) {
-		std::vector<scalar> v {};
+		TL::vector<scalar> v {};
 		for (auto value: row) {
 			v.push_back(value);
 		}
@@ -26,15 +26,15 @@ Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& value
 }
 
 
-Matrix::Matrix(const std::vector<scalar>& vector):
+Matrix::Matrix(const TL::vector<scalar>& vector):
 		_w {1}, _h {static_cast<size>(vector.size())} {
 	for (size i {0}; i < vector.size(); ++i) {
-		_values.push_back(std::vector<scalar> {vector[i]});
+		_values.push_back(TL::vector<scalar> {vector[i]});
 	}
 }
 
 
-Matrix::Matrix(const std::vector<std::vector<scalar>>& vector):
+Matrix::Matrix(const TL::vector<TL::vector<scalar>>& vector):
 		_w {static_cast<size>(vector.front().size())}, _h {static_cast<size>(vector.size())} {
 	for (size i {0}; i < vector.size(); ++i) {
 		_values.emplace_back(vector[i]);
@@ -53,12 +53,12 @@ Matrix Matrix::identity(size order) {
 }
 
 
-std::vector<scalar>& Matrix::operator[](size i) {
+TL::vector<scalar>& Matrix::operator[](size i) {
 	return _values[i];
 }
 
 
-const std::vector<scalar>& Matrix::operator[](size i) const {
+const TL::vector<scalar>& Matrix::operator[](size i) const {
 	return _values[i];
 }
 
@@ -244,8 +244,8 @@ Matrix Matrix::concat(const Matrix& matrix) const {
 }
 
 
-Matrix::operator std::vector<scalar>() const {
-	std::vector<scalar> result {};
+Matrix::operator TL::vector<scalar>() const {
+	TL::vector<scalar> result {};
 
 	for (const auto& v: _values) {
 		result.push_back(v[0]);
@@ -254,7 +254,7 @@ Matrix::operator std::vector<scalar>() const {
 }
 
 
-Matrix::operator std::vector<std::vector<scalar>>() const {
+Matrix::operator TL::vector<TL::vector<scalar>>() const {
 	return _values;
 }
 

@@ -57,7 +57,6 @@ int main() {
 	);
 
 	for (size_t i {0}; i < 50; ++i) {
-		// Step 1 - Measure
 		Matrix Z {
 				{1},
 				{2},
