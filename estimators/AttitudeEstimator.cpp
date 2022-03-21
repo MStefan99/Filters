@@ -96,11 +96,15 @@ void AttitudeEstimator::update(float dt) {
 
 void AttitudeEstimator::measure(const Matrix& rot, const Matrix& acc, float dt) {
 	const Matrix& x = _k.getState();
-	trig();
-
 	_u = rot;
-	_k.extrapolateState(xe, F);
-	_k.updateState(H, acc, out);
+	{
+		trig();
+		_k.extrapolateState(xe, F);
+	}
+	{
+		trig();
+		_k.updateState(H, acc, out);
+	}
 }
 
 
