@@ -13,21 +13,23 @@
 #include "input_validation.h"
 
 typedef double scalar;
+typedef size_t size;
+#define TL std
 
 
 class Matrix {
 public:
 	Matrix() = default;
-	explicit Matrix(size_t w, size_t h);
-	explicit Matrix(const std::vector<scalar>& vector);
-	explicit Matrix(const std::vector<std::vector<scalar>>& vector);
-	Matrix(const std::initializer_list<std::initializer_list<scalar>>& list);
-	static Matrix identity(size_t order);
+	explicit Matrix(size w, size h);
+	explicit Matrix(const TL::vector<scalar>& vector);
+	explicit Matrix(const TL::vector<TL::vector<scalar>>& vector);
+	Matrix(const TL::initializer_list<TL::initializer_list<scalar>>& list);
+	static Matrix identity(size order);
 
 	void randomize();
 
-	std::vector<scalar>& operator[](size_t i);
-	const std::vector<scalar>& operator[](size_t i) const;
+	TL::vector<scalar>& operator[](size i);
+	const TL::vector<scalar>& operator[](size i) const;
 
 	Matrix transpose() const;
 	Matrix invert() const;
@@ -45,19 +47,19 @@ public:
 	Matrix multiplyComponents(const Matrix& matrix) const;
 	Matrix concat(const Matrix& matrix) const;
 
-	explicit operator std::vector<scalar>() const;
-	explicit operator std::vector<std::vector<scalar>>() const;
+	explicit operator TL::vector<scalar>() const;
+	explicit operator TL::vector<TL::vector<scalar>>() const;
 
-	size_t getWidth() const;
-	size_t getHeight() const;
+	size getWidth() const;
+	size getHeight() const;
 
-	friend std::ostream& operator<<(std::ostream& out, const Matrix& matrix);
-	friend std::istream& operator>>(std::istream& in, Matrix& matrix);
+	friend TL::ostream& operator<<(TL::ostream& out, const Matrix& matrix);
+	friend TL::istream& operator>>(TL::istream& in, Matrix& matrix);
 
 protected:
-	std::vector<std::vector<scalar>> _values {};
-	size_t _w {0};
-	size_t _h {0};
+	TL::vector<TL::vector<scalar>> _values {};
+	size _w {0};
+	size _h {0};
 };
 
 #endif //TRADER_MATRIX_H

@@ -5,21 +5,21 @@
 #include "Kalman.h"
 
 
-Kalman::Kalman(const Matrix& F, const Matrix& Q, const Matrix& R):
-_f {F}, _q {Q}, _r {R} {
+Kalman::Kalman(const Matrix& Q, const Matrix& R, size xLen):
+_q {Q}, _r {R}, _x {1, xLen} {
 	// Nothing to do
 }
 
 
-void Kalman::init(const Matrix& X, const Matrix& P) {
-	_x = _f * X;
-	_p = _f * P * _f.transpose() + _q;
+void Kalman::init(const Matrix& F, const Matrix& X, const Matrix& P) {
+	_x = F * X;
+	_p = F * P * F.transpose() + _q;
 }
 
 
-void Kalman::predict() {
-	_x = _f * _x;
-	_p = _f * _p * _f.transpose() + _q;
+void Kalman::predict(const Matrix& F) {
+	_x = F * _x;
+	_p = F * _p * F.transpose() + _q;
 }
 
 
