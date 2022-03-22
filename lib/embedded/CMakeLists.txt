@@ -1,6 +1,6 @@
-add_library(matrix_embedded STATIC)
-target_sources(matrix_embedded PRIVATE
+add_library(matrix STATIC)
+target_sources(matrix PRIVATE
 		Matrix.cpp
 		)
 
-target_include_directories(matrix_embedded PUBLIC .)
+target_include_directories(matrix PUBLIC .)

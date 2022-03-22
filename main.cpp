@@ -5,13 +5,11 @@
 #include <iostream>
 #include <vector>
 
-#include "AHRS.h"
+#include "AttitudeEstimator.h"
 
 
 int main() {
-	const float dt = 0.02;
-
-	AHRS nav;
+	AttitudeEstimator e(0.05);
 
 	return 0;
 }
