@@ -57,7 +57,7 @@ void Kalman<xLen, zLen>::correct(const Vector<zLen>& Z, const Matrix<zLen, xLen>
 	Matrix<xLen, zLen> K {_p * H.transpose() * (H * _p * H.transpose() + _r).invert()};
 	_x = _x + K * (Z - H * _x);
 
-	Matrix<xLen, xLen> temp {Matrix<xLen, xLen>::identity() - K * H};
+	Matrix<xLen, xLen> temp {Matrix<0,0>::identity<xLen>() - K * H};
 	_p = temp * _p * temp.transpose() + K * _r * K.transpose();
 }
 

@@ -29,6 +29,7 @@ public:
 	explicit Matrix(const TL::vector<scalar>& vector);
 	explicit Matrix(const TL::vector<TL::vector<scalar>>& vector);
 	Matrix(const TL::initializer_list<TL::initializer_list<scalar>>& list);
+
 	template <size order>
 	static Matrix<order, order> identity();
 

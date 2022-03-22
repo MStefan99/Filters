@@ -66,7 +66,7 @@ void EKF<xLen,zLen,uLen>::updateState(const Vector<zLen>& z, const Matrix<zLen, 
 	Matrix<xLen,zLen> K {_p * H.transpose() * (H * _p * H.transpose() + _r).invert()};
 	_x = _x + K * (z - _updateState(_x));
 
-	Matrix<xLen,xLen> temp {Matrix<xLen,xLen>::identity() - K * H};
+	Matrix<xLen,xLen> temp {Matrix<0,0>::identity<xLen>() - K * H};
 	_p = temp * _p;
 }
 
