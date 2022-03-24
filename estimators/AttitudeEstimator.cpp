@@ -5,16 +5,10 @@
 #include "AttitudeEstimator.h"
 
 
-/*
- * Roll - phi
- * pitch - theta
- */
-
-
 #define processNoise 0.005
 
 
-AttitudeEstimator::AttitudeEstimator(scalar accUncertainty):
+AttitudeEstimator::AttitudeEstimator(float accUncertainty):
 		_k({
 						{processNoise, 0},
 						{0, processNoise}
@@ -36,7 +30,7 @@ AttitudeEstimator::AttitudeEstimator(scalar accUncertainty):
 //}
 
 
-//void AttitudeEstimator::update(scalar dt) {
+//void AttitudeEstimator::update(float dt) {
 //	_k.extrapolateState(F * dt);
 //}
 

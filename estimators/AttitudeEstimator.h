@@ -15,16 +15,16 @@
 
 class AttitudeEstimator {
 public:
-	explicit AttitudeEstimator(scalar accUncertainty);
+	explicit AttitudeEstimator(float accUncertainty);
 	void init(float roll, float pitch);
 
-	void update(scalar dt);
-	void measure(scalar dt,
-			const TL::vector<scalar>& rot,
-			const TL::vector<scalar>& acc);
+	void update(float dt);
+	void measure(float dt,
+			const Vector<3>& rot,
+			const Vector<3>& acc);
 
-	scalar getPitch() const;
-	scalar getRoll() const;
+	float getPitch() const;
+	float getRoll() const;
 
 protected:
 	Matrix<xLen,xLen> F(Vector<xLen> x, Vector<uLen> u);

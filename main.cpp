@@ -2,8 +2,6 @@
 // Created by mikha on 2.1.22.
 //
 
-#include <iostream>
-#include <vector>
 
 #include "AttitudeEstimator.h"
 
