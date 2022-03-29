@@ -5,10 +5,8 @@
 #include <iostream>
 #include <vector>
 
-#define MATRIX_IO
 
 #include "Kalman.h"
-#include "Matrix.h"
 
 
 int main() {
@@ -19,9 +17,9 @@ int main() {
 			299.6, 302.39, 295.04, 300.09, 294.72, 298.61, 294.64, 284.88, 272.82, 264.93, 251.46, 241.27, 222.98, 203.73,
 			184.1, 166.12, 138.71, 119.71, 100.41, 79.76, 50.62, 32.99, 2.14};
 
-	Kalman<6, 2> k {
+	Kalman k {
 			// Process noise matrix Q
-			Matrix<6, 6> {
+			Matrix {
 					{0.25, 0.5, 0.5, 0, 0, 0},
 					{0.5, 1, 1, 0, 0, 0},
 					{0.5, 1, 1, 0, 0, 0},
@@ -30,14 +28,14 @@ int main() {
 					{0, 0, 0, 0.5, 1, 1}
 			} * 0.15 * 0.15,
 			// Process uncertainty matrix R
-			Matrix<2, 2> {
+			Matrix {
 					{9, 0},
 					{0, 9}
 			}
 	};
 
 	// State extrapolation matrix F
-	Matrix<6, 6> F {
+	Matrix F {
 			{1, 1, 0.5, 0, 0, 0},
 			{0, 1, 1, 0, 0, 0},
 			{0, 0, 1, 0, 0, 0},
@@ -48,7 +46,7 @@ int main() {
 
 	k.init(F,
 			// Covariance matrix P
-			Matrix<6, 6> {
+			Matrix {
 					{500, 0, 0, 0, 0, 0},
 					{0, 500, 0, 0, 0, 0},
 					{0, 0, 500, 0, 0, 0},
@@ -57,7 +55,7 @@ int main() {
 					{0, 0, 0, 0, 0, 500}
 			},
 			// System state X
-			Vector<6> {
+			Matrix {
 					{0},
 					{0},
 					{0},
@@ -68,7 +66,7 @@ int main() {
 	);
 
 	// Observation matrix
-	Matrix<2, 6> H {
+	Matrix H {
 			{1, 0, 0, 0, 0, 0},
 			{0, 0, 0, 1, 0, 0}
 	};
@@ -77,7 +75,7 @@ int main() {
 	k.predict(F);
 
 	for (size_t i {0}; i < x.size(); ++i) {
-		Vector<2> Z {
+		Matrix Z {
 				{x[i]},
 				{y[i]}
 		};
