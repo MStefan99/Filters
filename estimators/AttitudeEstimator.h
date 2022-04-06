@@ -5,12 +5,8 @@
 #ifndef FILTERS_ATTITUDEESTIMATOR_H
 #define FILTERS_ATTITUDEESTIMATOR_H
 
+#include <cmath>
 #include "EKF.h"
-
-
-#define xLen 2
-#define zLen 3
-#define uLen 2
 
 
 class AttitudeEstimator {
@@ -19,18 +15,20 @@ public:
 	void init(float roll, float pitch);
 
 	void update(float dt);
-	void measure(float dt,
-			const Vector<3>& rot,
-			const Vector<3>& acc);
+	void measure(
+			const Matrix& rot,
+			const Matrix& acc,
+			float dt);
 
-	float getPitch() const;
 	float getRoll() const;
+	float getPitch() const;
+
+	Matrix getUncertainty() const;
 
 protected:
-	Matrix<xLen,xLen> F(Vector<xLen> x, Vector<uLen> u);
-	Matrix<zLen,xLen> H(Vector<xLen> x);
+	Matrix _u {};
 
-	EKF<xLen,zLen,uLen> _k;
+	EKF _k;
 };
 
 
