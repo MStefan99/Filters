@@ -14,7 +14,7 @@ Matrix::Matrix(size w, size h):
 }
 
 
-Matrix::Matrix(const TL::initializer_list<TL::initializer_list<scalar>>& values):
+Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& values):
 		_w {static_cast<size>(values.begin()->size())}, _h {static_cast<size>(values.size())} {
 	for (const auto& row : values) {
 		TL::vector<scalar> v {};
@@ -29,15 +29,17 @@ Matrix::Matrix(const TL::initializer_list<TL::initializer_list<scalar>>& values)
 Matrix::Matrix(const TL::vector<scalar>& vector):
 		_w {1}, _h {static_cast<size>(vector.size())} {
 	for (size i {0}; i < vector.size(); ++i) {
-		_values.push_back(TL::vector<scalar> {vector[i]});
+		TL::vector<scalar> v;
+		v.push_back(vector[i]);
+		_values.push_back(v);
 	}
 }
 
 
 Matrix::Matrix(const TL::vector<TL::vector<scalar>>& vector):
-		_w {static_cast<size>(vector.front().size())}, _h {static_cast<size>(vector.size())} {
+		_w {static_cast<size>(vector[0].size())}, _h {static_cast<size>(vector.size())} {
 	for (size i {0}; i < vector.size(); ++i) {
-		_values.emplace_back(vector[i]);
+		_values.push_back({vector[i]});
 	}
 }
 
@@ -270,8 +272,8 @@ size Matrix::getHeight() const {
 
 
 #ifdef MATRIX_IO
-TL::ostream& operator<<(TL::ostream& out, const Matrix& matrix) {
-	out << matrix._w << ':' << matrix._h << TL::endl;
+std::ostream& operator<<(std::ostream& out, const Matrix& matrix) {
+	out << matrix._w << ':' << matrix._h << std::endl;
 
 	for (size j {0}; j < matrix._h; ++j) {
 		for (size i {0}; i < matrix._w; ++i) {
@@ -280,7 +282,7 @@ TL::ostream& operator<<(TL::ostream& out, const Matrix& matrix) {
 			}
 			out << matrix[j][i];
 		}
-		out << TL::endl;
+		out << std::endl;
 	}
 
 	return out;

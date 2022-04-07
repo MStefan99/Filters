@@ -5,8 +5,9 @@
 #ifndef TRADER_MATRIX_H
 #define TRADER_MATRIX_H
 
-#include <vector>
+#include "vector.h"
 #include <cstdint>
+#include <initializer_list>
 
 
 #ifdef MATRIX_IO
@@ -18,7 +19,7 @@
 
 typedef float scalar;
 typedef uint16_t size;
-#define TL std
+#define TL tl
 
 
 class Matrix {
@@ -27,7 +28,7 @@ public:
 	explicit Matrix(size w, size);
 	explicit Matrix(const TL::vector<scalar>& vector);
 	explicit Matrix(const TL::vector<TL::vector<scalar>>& vector);
-	Matrix(const TL::initializer_list<TL::initializer_list<scalar>>& list);
+	Matrix(const std::initializer_list<std::initializer_list<scalar>>& list);
 	static Matrix identity(size order);
 
 	TL::vector<scalar>& operator[](size i);
@@ -56,7 +57,7 @@ public:
 	size getHeight() const;
 
 	#ifdef MATRIX_IO
-	friend TL::ostream& operator<<(TL::ostream& out, const Matrix& matrix);
+	friend std::ostream& operator<<(std::ostream& out, const Matrix& matrix);
 	#endif
 
 protected:
