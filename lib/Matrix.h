@@ -5,7 +5,7 @@
 #ifndef TRADER_MATRIX_H
 #define TRADER_MATRIX_H
 
-#include "vector.h"
+#include "vector.hpp"
 #include <cstdint>
 #include <initializer_list>
 

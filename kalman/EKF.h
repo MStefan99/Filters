@@ -13,15 +13,11 @@ class EKF {
 public:
 	EKF() = delete;
 	EKF(const EKF& ekf) = default;
-	EKF(const Matrix& Q, const Matrix& R,
-			Matrix (* extrapolateState)(const Matrix& x, const Matrix& u, float dt),
-			Matrix (* getOutput)(const Matrix& x),
-			Matrix (* getF)(const Matrix& x, const Matrix& u, float dt),
-			Matrix (* getH)(const Matrix& x));
+	EKF(const Matrix& Q, const Matrix& R);
 
-	void init(const Matrix& P, const Matrix& x, const Matrix& u);
-	void extrapolateState(const Matrix& u, float dt);
-	void updateState(const Matrix& z);
+	void init(const Matrix& P, const Matrix& xe, const Matrix& F);
+	void extrapolateState(const Matrix& xe, const Matrix& F);
+	void updateState(const Matrix& H, const Matrix& z, const Matrix& out);
 
 	Matrix getState() const;
 	Matrix getCovariance() const;
@@ -31,12 +27,6 @@ protected:
 	Matrix _p;
 	Matrix _r;
 	Matrix _x;
-
-	Matrix (* _extrapolateState)(const Matrix& x, const Matrix& u, float dt) {nullptr};  // f(x, u)
-	Matrix (* _getOutput)(const Matrix& x) {nullptr};  // h(x)
-
-	Matrix (* _getF)(const Matrix& x, const Matrix& u, float dt) {nullptr};  // Fj(x, u)
-	Matrix (* _getH)(const Matrix& x) {nullptr};  // Hj(x)
 };
 
 

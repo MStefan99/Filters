@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <vector>
 
 #include "AttitudeEstimator.h"
 #include "Kalman.h"

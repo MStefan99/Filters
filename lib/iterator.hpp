@@ -2,8 +2,8 @@
 // Created by MStefan99 on 19.7.21.
 //
 
-#ifndef ARDUI_ITERATOR_H
-#define ARDUI_ITERATOR_H
+#ifndef ARDUI_ITERATOR_HPP
+#define ARDUI_ITERATOR_HPP
 
 namespace tl {
 	namespace _internal {
@@ -41,4 +41,4 @@ namespace tl {
 	}
 }
 
-#endif //ARDUI_ITERATOR_H
+#endif //ARDUI_ITERATOR_HPP

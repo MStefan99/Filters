@@ -12,63 +12,42 @@
 #define phi x[0][0]
 #define theta x[1][0]
 
-#define p u[0][0]
-#define q u[1][0]
-#define r u[2][0]
+#define p _u[0][0]
+#define q _u[1][0]
+#define r _u[2][0]
 
+#define trig() \
+  float sin_phi = sinf(phi); \
+  float cos_phi = cosf(phi); \
+  float sin_theta = sinf(theta); \
+  float cos_theta = cosf(theta); \
+  float tan_theta = tanf(theta); \
+  float tan_s = tan_theta * tan_theta + 1
 
-Matrix extrapolateState(const Matrix& x, const Matrix& u, float dt) {
-	float sin_phi = sinf(phi);
-	float cos_phi = cosf(phi);
-	float tan_theta = tanf(theta);
-
-	return {
-			{phi + (p + q * sin_phi * tan_theta + r * cos_phi * tan_theta) * dt},
-			{theta + (q * cos_phi + r * sin_phi) * dt}
-	};
+#define xe {\
+  {phi + (p + q * sin_phi * tan_theta + r * cos_phi * tan_theta) * dt},\
+  {theta + (q * cos_phi + r * sin_phi) * dt}\
 }
 
 
-Matrix getOutput(const Matrix& x) {
-	float sin_phi = sinf(phi);
-	float sin_theta = sinf(theta);
-	float cos_phi = cosf(phi);
-	float cos_theta = cosf(theta);
-
-	return {
-			{-g * sin_theta},
-			{g * cos_theta * sin_phi},
-			{g * cos_theta * cos_phi}
-	};
+#define out {\
+  {-g * sin_theta},\
+  {g * cos_theta * sin_phi},\
+  {g * cos_theta * cos_phi}\
 }
 
 
-Matrix getF(const Matrix& x, const Matrix& u, float dt) {
-	float sin_phi = sinf(phi);
-	float cos_phi = cosf(phi);
-
-	float tan_theta = tanf(theta);
-	float tan_s = tan_theta * tan_theta + 1;
-
-	return {
-			{dt * (q * cos_phi * tan_theta - r * sin_phi * tan_theta) + 1,
-					dt * (r * cos_phi * tan_s + q * sin_phi * tan_s)},
-			{dt * (r * cos_phi - q * sin_phi), 1}
-	};
+#define F {\
+  {dt * (q * cos_phi * tan_theta - r * sin_phi * tan_theta) + 1,\
+  dt * (r * cos_phi * tan_s + q * sin_phi * tan_s)},\
+  {dt * (r * cos_phi - q * sin_phi), 1}\
 }
 
 
-Matrix getH(const Matrix& x) {
-	float sin_phi = sinf(phi);
-	float sin_theta = sinf(theta);
-	float cos_phi = cosf(phi);
-	float cos_theta = cosf(theta);
-
-	return {
-			{0, -g * cos_theta},
-			{g * cos_phi * cos_theta, -g * sin_phi * sin_theta},
-			{-g * cos_theta * sin_phi, -g * cos_phi * sin_theta}
-	};
+#define H {\
+  {0, -g * cos_theta},\
+  {g * cos_phi * cos_theta, -g * sin_phi * sin_theta},\
+  {-g * cos_theta * sin_phi, -g * cos_phi * sin_theta}\
 }
 
 
@@ -82,11 +61,8 @@ AttitudeEstimator::AttitudeEstimator(float accUncertainty):
 						{accUncertainty, 0, 0},
 						{0, accUncertainty, 0},
 						{0, 0, accUncertainty}
-				},
-				&extrapolateState,
-				&getOutput,
-				&getF,
-				&getH} {
+				}
+		} {
 // Nothing to do
 }
 
@@ -111,14 +87,20 @@ void AttitudeEstimator::init(float roll, float pitch) {
 
 
 void AttitudeEstimator::update(float dt) {
-	_k.extrapolateState(_u, dt);
+	const Matrix& x = _k.getState();
+	trig();
+
+	_k.extrapolateState(xe, F);
 }
 
 
 void AttitudeEstimator::measure(const Matrix& rot, const Matrix& acc, float dt) {
+	const Matrix& x = _k.getState();
+	trig();
+
 	_u = rot;
-	_k.extrapolateState(rot, dt);
-	_k.updateState(acc);
+	_k.extrapolateState(xe, F);
+	_k.updateState(H, acc, out);
 }
 
 
