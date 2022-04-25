@@ -2,7 +2,7 @@
 // Created by MStefan99 on 21.3.22.
 //
 
-#include "AttitudeEstimator.h"
+#include "AttitudeEstimator.hpp"
 
 
 #define processNoise 0.005f

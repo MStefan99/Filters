@@ -2,7 +2,7 @@
 // Created by MStefan99 on 29.3.22.
 //
 
-#include "EKF.h"
+#include "EKF.hpp"
 
 
 EKF::EKF(const Matrix& Q, const Matrix& R):

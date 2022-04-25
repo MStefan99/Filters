@@ -2,8 +2,8 @@
 // Created by MStefan99 on 21.3.22.
 //
 
-#ifndef FILTERS_EKF_H
-#define FILTERS_EKF_H
+#ifndef FILTERS_EKF_HPP
+#define FILTERS_EKF_HPP
 
 
 #include "Matrix.h"
@@ -30,4 +30,4 @@ protected:
 };
 
 
-#endif //FILTERS_EKF_H
+#endif //FILTERS_EKF_HPP

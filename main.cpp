@@ -4,8 +4,8 @@
 
 #include <iostream>
 
-#include "AttitudeEstimator.h"
-#include "Kalman.h"
+#include "AttitudeEstimator.hpp"
+#include "Kalman.hpp"
 
 
 int main() {

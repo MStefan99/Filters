@@ -2,11 +2,11 @@
 // Created by MStefan99 on 21.3.22.
 //
 
-#ifndef FILTERS_ATTITUDEESTIMATOR_H
-#define FILTERS_ATTITUDEESTIMATOR_H
+#ifndef FILTERS_ATTITUDEESTIMATOR_HPP
+#define FILTERS_ATTITUDEESTIMATOR_HPP
 
 #include <cmath>
-#include "EKF.h"
+#include "EKF.hpp"
 
 
 class AttitudeEstimator {
@@ -32,4 +32,4 @@ protected:
 };
 
 
-#endif //FILTERS_ATTITUDEESTIMATOR_H
+#endif //FILTERS_ATTITUDEESTIMATOR_HPP

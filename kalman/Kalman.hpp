@@ -2,8 +2,8 @@
 // Created by mikha on 11.1.22.
 //
 
-#ifndef FILTERS_KALMAN_H
-#define FILTERS_KALMAN_H
+#ifndef FILTERS_KALMAN_HPP
+#define FILTERS_KALMAN_HPP
 
 #include "Matrix.h"
 
@@ -29,4 +29,4 @@ protected:
 };
 
 
-#endif //FILTERS_KALMAN_H
+#endif //FILTERS_KALMAN_HPP

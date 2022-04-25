@@ -2,7 +2,7 @@
 // Created by mikha on 11.1.22.
 //
 
-#include "Kalman.h"
+#include "Kalman.hpp"
 
 
 Kalman::Kalman(const Matrix& Q, const Matrix& R):
