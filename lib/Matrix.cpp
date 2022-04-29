@@ -6,13 +6,13 @@
 
 
 Matrix::Matrix(size_type w, size_type h):
-		_w {w}, _h {h} {
+		_h {h}, _w {w} {
 	_values = allocator_type().allocate(_h * _w);
 }
 
 
 Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& values):
-		_w {static_cast<size_type>(values.begin()->size())}, _h {static_cast<size_type>(values.size())} {
+_h {static_cast<size_type>(values.size())}, _w {static_cast<size_type>(values.begin()->size())} {
 	_values = allocator_type().allocate(_h * _w);
 
 	size_type j = 0;

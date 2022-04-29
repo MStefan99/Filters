@@ -8,7 +8,7 @@
 
 
 int main() {
-	AttitudeEstimator e {0.05};
+	AttitudeEstimator e {0.05f};
 
 	e.init(0, 0);
 
@@ -20,9 +20,9 @@ int main() {
 				}, {
 						{0},
 						{0},
-						{9.81}
+						{9.81f}
 				},
-				0.1);
+				0.1f);
 
 		std::cout << "Estimate for iteration " << i + 1 << std::endl;
 		std::cout << "Pitch: " << e.getPitch() << ", roll: " << e.getRoll() << std::endl;
