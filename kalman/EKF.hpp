@@ -6,7 +6,7 @@
 #define FILTERS_EKF_HPP
 
 
-#include "Matrix.h"
+#include "Matrix.hpp"
 
 
 class EKF {

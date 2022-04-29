@@ -5,7 +5,7 @@
 #ifndef FILTERS_KALMAN_HPP
 #define FILTERS_KALMAN_HPP
 
-#include "Matrix.h"
+#include "Matrix.hpp"
 
 
 class Kalman {
