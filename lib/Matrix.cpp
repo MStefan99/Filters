@@ -5,19 +5,19 @@
 #include "Matrix.h"
 
 
-Matrix::Matrix(size w, size h):
+Matrix::Matrix(size_type w, size_type h):
 		_w {w}, _h {h} {
 	_values = allocator_type().allocate(_h * _w);
 }
 
 
 Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& values):
-		_w {static_cast<size>(values.begin()->size())}, _h {static_cast<size>(values.size())} {
+		_w {static_cast<size_type>(values.begin()->size())}, _h {static_cast<size_type>(values.size())} {
 	_values = allocator_type().allocate(_h * _w);
 
-	size j = 0;
+	size_type j = 0;
 	for (auto& row : values) {
-		size i = 0;
+		size_type i = 0;
 		for (auto& e : row) {
 			this->operator[](j)[i++] = e;
 		}
@@ -27,8 +27,8 @@ Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& value
 
 
 Matrix::Matrix(const Matrix& matrix): Matrix(matrix._w, matrix._h) {
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			this->operator[](j)[i] = matrix[j][i];
 		}
 	}
@@ -43,8 +43,8 @@ Matrix& Matrix::operator=(const Matrix& matrix) {
 		_w = matrix._w;
 		_values = allocator_type().allocate(_h * _w);
 
-		for (size j {0}; j < _h; ++j) {
-			for (size i {0}; i < _w; ++i) {
+		for (size_type j {0}; j < _h; ++j) {
+			for (size_type i {0}; i < _w; ++i) {
 				this->operator[](j)[i] = matrix[j][i];
 			}
 		}
@@ -58,10 +58,10 @@ Matrix::~Matrix() {
 }
 
 
-Matrix Matrix::identity(size order) {
+Matrix Matrix::identity(size_type order) {
 	Matrix result {order, order};
 
-	for (size i {0}; i < order; ++i) {
+	for (size_type i {0}; i < order; ++i) {
 		result[i][i] = 1;
 	}
 
@@ -69,12 +69,12 @@ Matrix Matrix::identity(size order) {
 }
 
 
-scalar* Matrix::operator[](size i) {
+typename Matrix::scalar* Matrix::operator[](size_type i) {
 	return _values + (i * _w);
 }
 
 
-const scalar* Matrix::operator[](size i) const {
+const typename Matrix::scalar* Matrix::operator[](size_type i) const {
 	return _values + (i * _w);
 }
 
@@ -82,8 +82,8 @@ const scalar* Matrix::operator[](size i) const {
 Matrix Matrix::transpose() const {
 	Matrix result {_h, _w};
 
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			result[i][j] = this->operator[](j)[i];
 		}
 	}
@@ -100,15 +100,15 @@ Matrix Matrix::invert() const {
 	Matrix augmented {Matrix::identity(_w)};
 
 	// Gaussian elimination
-	for (size r1 {0}; r1 < _w; ++r1) {
-		for (size r2 {0}; r2 < _w; ++r2) {
+	for (size_type r1 {0}; r1 < _w; ++r1) {
+		for (size_type r2 {0}; r2 < _w; ++r2) {
 			if (r1 == r2) {
 				continue;
 			}
 
 			scalar factor {temp[r2][r1] / temp[r1][r1]};
 
-			for (size i {0}; i < _w; ++i) {
+			for (size_type i {0}; i < _w; ++i) {
 				temp[r2][i] -= factor * temp[r1][i];
 				augmented[r2][i] -= factor * augmented[r1][i];
 			}
@@ -116,10 +116,10 @@ Matrix Matrix::invert() const {
 	}
 
 	// Gaining identity matrix
-	for (size r {0}; r < _w; ++r) {
+	for (size_type r {0}; r < _w; ++r) {
 		scalar factor = 1 / temp[r][r];
 
-		for (size i {0}; i < _w; ++i) {
+		for (size_type i {0}; i < _w; ++i) {
 			augmented[r][i] *= factor;
 		}
 	}
@@ -131,8 +131,8 @@ Matrix Matrix::invert() const {
 Matrix Matrix::operator*(scalar scalar) const {
 	Matrix result {_w, _h};
 
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			result[j][i] = this->operator[](j)[i] * scalar;
 		}
 	}
@@ -143,8 +143,8 @@ Matrix Matrix::operator*(scalar scalar) const {
 Matrix Matrix::operator/(scalar scalar) const {
 	Matrix result {_w, _h};
 
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			result[j][i] = this->operator[](j)[i] / scalar;
 		}
 	}
@@ -153,8 +153,8 @@ Matrix Matrix::operator/(scalar scalar) const {
 
 
 Matrix& Matrix::operator/=(scalar scalar) {
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			this->operator[](j)[i] /= scalar;
 		}
 	}
@@ -170,10 +170,10 @@ Matrix Matrix::operator*(const Matrix& matrix) const {
 	}
 
 	Matrix result {matrix._w, _h};
-	for (size j {0}; j < matrix._w; ++j) {
-		for (size i {0}; i < _h; ++i) {
+	for (size_type j {0}; j < matrix._w; ++j) {
+		for (size_type i {0}; i < _h; ++i) {
 			scalar sum {0};
-			for (size k {0}; k < _w; ++k) {
+			for (size_type k {0}; k < _w; ++k) {
 				sum += this->operator[](i)[k] * matrix[k][j];
 			}
 			result[i][j] = sum;
@@ -184,8 +184,8 @@ Matrix Matrix::operator*(const Matrix& matrix) const {
 
 
 Matrix& Matrix::operator*=(scalar scalar) {
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			this->operator[](j)[i] = this->operator[](j)[i] * scalar;
 		}
 	}
@@ -200,8 +200,8 @@ Matrix Matrix::operator+(const Matrix& matrix) const {
 
 	Matrix result {_w, _h};
 
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			result[j][i] = this->operator[](j)[i] + matrix[j][i];
 		}
 	}
@@ -216,8 +216,8 @@ Matrix Matrix::operator-(const Matrix& matrix) const {
 
 	Matrix result {_w, _h};
 
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			result[j][i] = this->operator[](j)[i] - matrix[j][i];
 		}
 	}
@@ -232,8 +232,8 @@ Matrix Matrix::multiplyComponents(const Matrix& matrix) const {
 
 	Matrix result {_w, _h};
 
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			result[j][i] = this->operator[](j)[i] * matrix[j][i];
 		}
 	}
@@ -246,13 +246,13 @@ Matrix Matrix::concat(const Matrix& matrix) const {
 		return *this;
 	}
 
-	Matrix result {static_cast<size>(_w + matrix._w), _h};
+	Matrix result {static_cast<size_type>(_w + matrix._w), _h};
 
-	for (size j {0}; j < _h; ++j) {
-		for (size i {0}; i < _w; ++i) {
+	for (size_type j {0}; j < _h; ++j) {
+		for (size_type i {0}; i < _w; ++i) {
 			result[j][i] = this->operator[](j)[i];
 		}
-		for (size i {0}; i < matrix._w; ++i) {
+		for (size_type i {0}; i < matrix._w; ++i) {
 			result[j][i + _w] = matrix[j][i];
 		}
 	}
@@ -260,12 +260,12 @@ Matrix Matrix::concat(const Matrix& matrix) const {
 }
 
 
-size Matrix::getWidth() const {
+typename Matrix::size_type Matrix::getWidth() const {
 	return _w;
 }
 
 
-size Matrix::getHeight() const {
+typename Matrix::size_type Matrix::getHeight() const {
 	return _h;
 }
 
@@ -276,8 +276,8 @@ size Matrix::getHeight() const {
 std::ostream& operator<<(std::ostream& out, const Matrix& matrix) {
 	out << matrix._w << ':' << matrix._h << std::endl;
 
-	for (size j {0}; j < matrix._h; ++j) {
-		for (size i {0}; i < matrix._w; ++i) {
+	for (typename Matrix::size_type j {0}; j < matrix._h; ++j) {
+		for (typename Matrix::size_type i {0}; i < matrix._w; ++i) {
 			if (i) {
 				out << ',';
 			}

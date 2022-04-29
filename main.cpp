@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "AttitudeEstimator.hpp"
-#include "Kalman.hpp"
 
 
 int main() {
