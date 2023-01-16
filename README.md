@@ -1,4 +1,6 @@
 # Filters
 
 This repository will contain filters to be used in other projects.  
-Planned filters: Kalman filter, low-pass, high-pass, bandpass and (possibly) bandstop.
+Implemented filters: Kalman filter (needs migrating from floating point to fixed point)  
+Planned filters: low-pass, high-pass, bandpass, bandstop.
+
