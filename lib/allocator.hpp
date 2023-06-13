@@ -70,13 +70,13 @@ namespace tl {
 
 	template <class T>
 	typename allocator<T>::pointer allocator<T>::allocate(size_type n) {
-		return static_cast<pointer>(std::malloc(sizeof(T) * n));
+		return static_cast<pointer>(malloc(sizeof(T) * n));
 	}
 
 
 	template <class T>
 	void allocator<T>::deallocate(pointer p, unsigned int) {
-		std::free(p);
+		free(p);
 	}
 
 
