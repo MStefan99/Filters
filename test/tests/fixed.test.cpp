@@ -5,6 +5,7 @@
 #include "Tester.hpp"
 
 #include "FixMath.hpp"
+#include "Matrix.hpp"
 
 
 using namespace fix_math;

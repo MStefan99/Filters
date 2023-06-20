@@ -13,11 +13,7 @@ add_compile_options(-O0)
 
 
 add_subdirectory(lib)
-add_subdirectory(kalman)
-add_subdirectory(estimators)
 add_subdirectory(test)
 
 add_executable(main main.cpp)
-target_link_libraries(main Kalman)
-target_link_libraries(main AttitudeEstimator)
-target_link_libraries(main FixMath)
+target_include_directories(main PRIVATE estimators kalman lib)

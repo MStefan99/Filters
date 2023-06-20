@@ -9,11 +9,6 @@
 
 
 int main() {
-	uint32_t a = 5;
-	fix_math::fixed b(a);
-	b += 1;
-	std::cout << static_cast<uint32_t>(b) << std::endl;
-
 	AttitudeEstimator e{0.05f};
 
 	e.init(0, 0);
@@ -26,7 +21,7 @@ int main() {
 							}, {
 									{0},
 									{0},
-									{9.81f}
+									{9.81}
 							},
 							0.1f);
 
