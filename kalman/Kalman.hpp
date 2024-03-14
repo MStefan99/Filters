@@ -5,72 +5,76 @@
 #ifndef FILTERS_KALMAN_HPP
 #define FILTERS_KALMAN_HPP
 
-#include "FixMath.hpp"
 #include "Matrix.hpp"
 
 
-template <class scalar = fixed, class size_type = unsigned int>
+template <class scalar = float, class size_type = unsigned int, size_type nx = 1, size_type nu = 1, size_type nz = 1>
 class Kalman {
 public:
 	Kalman() = delete;
 	Kalman(const Kalman& kalman) = default;
-	Kalman(const Matrix<scalar, size_type>& Q, const Matrix<scalar, size_type>& R);
+	Kalman(const Matrix<scalar, size_type, nx, 1>& x0,
+	       const Matrix<scalar, size_type, nx, nx>& P0,
+	       const Matrix<scalar, size_type, nx, nx>& Q,
+	       const Matrix<scalar, size_type, nz, nz>& R);
 
-	void init(const Matrix<scalar, size_type>& F, const Matrix<scalar, size_type>& P, const Matrix<scalar, size_type>& x);
-	void predict(const Matrix<scalar, size_type>& F);
-	void correct(const Matrix<scalar, size_type>& z, const Matrix<scalar, size_type>& H);
+	void predict(const Matrix<scalar, size_type, nx, nx>& F,
+	             const Matrix<scalar, size_type, nx, nu>& G,
+	             const Matrix<scalar, size_type, nu, 1>& u);
+	void correct(const Matrix<scalar, size_type, nz, nx>& H,
+	             const Matrix<scalar, size_type, nz, 1>& z);
 
-	Matrix<scalar, size_type> getState() const;
-	Matrix<scalar, size_type> getCovariance() const;
+	Matrix<scalar, size_type, nx, 1> x() const;
+	Matrix<scalar, size_type, nx, nx> P() const;
 
 protected:
-	Matrix<scalar, size_type> _q;
-	Matrix<scalar, size_type> _p;
-	Matrix<scalar, size_type> _r;
-	Matrix<scalar, size_type> _x;
+	Matrix<scalar, size_type, nx, 1> _x {};
+	Matrix<scalar, size_type, nx, nx> _P {};
+	Matrix<scalar, size_type, nx, nx> _Q {};
+	Matrix<scalar, size_type, nz, nz> _R {};
 };
 
-template <class scalar, class size_type>
-Kalman<scalar, size_type>::Kalman(const Matrix<scalar, size_type>& Q, const Matrix<scalar, size_type>& R):
-		_q {Q}, _r {R}, _x {1, Q.getHeight()} {
+
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+Kalman<scalar, size_type, nx, nu, nz>::Kalman(
+		const Matrix<scalar, size_type, nx, 1>& x0,
+		const Matrix<scalar, size_type, nx, nx>& P0,
+		const Matrix<scalar, size_type, nx, nx>& Q,
+		const Matrix<scalar, size_type, nz, nz>& R):
+		_x {x0}, _P {P0}, _Q {Q}, _R {R} {
 	// Nothing to do
 }
 
 
-template <class scalar, class size_type>
-void Kalman<scalar, size_type>::init(const Matrix<scalar, size_type>& F, const Matrix<scalar, size_type>& P, const Matrix<scalar, size_type>& x) {
-	_x = F * x;
-	_p = F * P * F.transpose() + _q;
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+void Kalman<scalar, size_type, nx, nu, nz>::predict(const Matrix<scalar, size_type, nx, nx>& F,
+                                                    const Matrix<scalar, size_type, nx, nu>& G,
+                                                    const Matrix<scalar, size_type, nu, 1>& u) {
+	_x = F * _x + G * u;
+	_P = F * _P * F.transpose() + _Q;
 }
 
 
-template <class scalar, class size_type>
-void Kalman<scalar, size_type>::predict(const Matrix<scalar, size_type>& F) {
-	_x = F * _x;
-	_p = F * _p * F.transpose() + _q;
-}
-
-
-template <class scalar, class size_type>
-void Kalman<scalar, size_type>::correct(const Matrix<scalar, size_type>& z, const Matrix<scalar, size_type>& H) {
-	Matrix K {_p * H.transpose() * (H * _p * H.transpose() + _r).invert()};
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+void Kalman<scalar, size_type, nx, nu, nz>::correct(const Matrix<scalar, size_type, nz, nx>& H,
+                                                    const Matrix<scalar, size_type, nz, 1>& z) {
+	auto K {_P * H.transpose() * (H * _P * H.transpose() + _R).inverse()};
 	_x = _x + K * (z - H * _x);
 
-	Matrix temp {K * H};
-	temp = Matrix<scalar, size_type>::identity(temp.getHeight()) - temp;
-	_p = temp * _p * temp.transpose() + K * _r * K.transpose();
+	auto IKH {Matrix<scalar, size_type, nx, nx>::identity() - K * H};
+	_P = IKH * _P * IKH.transpose() + K * _R * K.transpose();
 }
 
 
-template <class scalar, class size_type>
-Matrix <scalar, size_type>Kalman<scalar, size_type>::getState() const {
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+Matrix<scalar, size_type, nx, 1> Kalman<scalar, size_type, nx, nu, nz>::x() const {
 	return _x;
 }
 
 
-template <class scalar, class size_type>
-Matrix <scalar, size_type>Kalman<scalar, size_type>::getCovariance() const {
-	return _p;
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+Matrix<scalar, size_type, nx, nx> Kalman<scalar, size_type, nx, nu, nz>::P() const {
+	return _P;
 }
 
 #endif //FILTERS_KALMAN_HPP

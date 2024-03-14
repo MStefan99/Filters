@@ -7,72 +7,71 @@
 
 
 #include "Matrix.hpp"
-#include "FixMath.hpp"
 
 
-template <class scalar = fixed, class size_type = unsigned int>
+template <class scalar = float, class size_type = unsigned int, size_type nx = 1, size_type nu = 1, size_type nz = 1>
 class EKF {
 public:
 	EKF() = delete;
 	EKF(const EKF& ekf) = default;
-	EKF(const Matrix<scalar, size_type>& Q, const Matrix<scalar, size_type>& R);
+	EKF(const Matrix<scalar, size_type, nx, 1>& x0,
+	    const Matrix<scalar, size_type, nx, nx>& P0,
+	    const Matrix<scalar, size_type, nx, nx>& Q,
+	    const Matrix<scalar, size_type, nz, nz>& R);
 
-	void init(const Matrix<scalar, size_type>& P, const Matrix<scalar, size_type>& xe, const Matrix<scalar, size_type>& F);
-	void extrapolateState(const Matrix<scalar, size_type>& xe, const Matrix<scalar, size_type>& F);
-	void updateState(const Matrix<scalar, size_type>& H, const Matrix<scalar, size_type>& z, const Matrix<scalar, size_type>& out);
+	void predict(const Matrix<scalar, size_type, nx, nx>& F,
+	             const Matrix<scalar, size_type, nx, 1>& xe);
+	void correct(const Matrix<scalar, size_type, nz, nx>& H,
+	             const Matrix<scalar, size_type, nz, 1>& z,
+	             const Matrix<scalar, size_type, nz, 1>& out);
 
-	Matrix<scalar, size_type> getState() const;
-	Matrix<scalar, size_type> getCovariance() const;
+	Matrix<scalar, size_type, nx, 1> x() const;
+	Matrix<scalar, size_type, nx, nx> P() const;
 
 protected:
-	Matrix<scalar, size_type> _q;
-	Matrix<scalar, size_type> _p;
-	Matrix<scalar, size_type> _r;
-	Matrix<scalar, size_type> _x;
+	Matrix<scalar, size_type, nx, 1> _x {};
+	Matrix<scalar, size_type, nx, nx> _P {};
+	Matrix<scalar, size_type, nx, nx> _Q {};
+	Matrix<scalar, size_type, nz, nz> _R {};
 };
 
-template <class scalar, class size_type>
-EKF<scalar, size_type>::EKF(const Matrix<scalar, size_type>& Q, const Matrix<scalar, size_type>& R):
-		_q {Q}, _r {R} {
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+EKF<scalar, size_type, nx, nu, nz>::EKF(const Matrix<scalar, size_type, nx, 1>& x0,
+                                        const Matrix<scalar, size_type, nx, nx>& P0,
+                                        const Matrix<scalar, size_type, nx, nx>& Q,
+                                        const Matrix<scalar, size_type, nz, nz>& R):
+		_x {x0}, _P {P0}, _Q {Q}, _R {R} {
 	// Nothing to do
 }
 
 
-template <class scalar, class size_type>
-void EKF<scalar, size_type>::init(const Matrix<scalar, size_type>& P,
-		const Matrix<scalar, size_type>& xe,
-		const Matrix<scalar, size_type>& F) {
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+void EKF<scalar, size_type, nx, nu, nz>::predict(const Matrix<scalar, size_type, nx, nx>& F,
+                                                 const Matrix<scalar, size_type, nx, 1>& xe) {
 	_x = xe;
-	_p = F * P * F.transpose() + _q;
+	_P = F * _P * F.transpose() + _Q;
 }
 
 
-template <class scalar, class size_type>
-void EKF<scalar, size_type>::extrapolateState(const Matrix<scalar, size_type>& xe, const Matrix<scalar, size_type>& F) {
-	_x = xe;
-	_p = F * _p * F.transpose() + _q;
-}
-
-
-template <class scalar, class size_type>
-void EKF<scalar, size_type>::updateState(const Matrix<scalar, size_type>& H, const Matrix<scalar, size_type>& z, const Matrix<scalar, size_type>& out) {
-	Matrix K {_p * H.transpose() * (H * _p * H.transpose() + _r).invert()};
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+void EKF<scalar, size_type, nx, nu, nz>::correct(const Matrix<scalar, size_type, nz, nx>& H,
+                                                 const Matrix<scalar, size_type, nz, 1>& z,
+                                                 const Matrix<scalar, size_type, nz, 1>& out) {
+	auto K {_P * H.transpose() * (H * _P * H.transpose() + _R).inverse()};
 	_x = _x + K * (z - out);
-
-	Matrix temp {Matrix<scalar, size_type>::identity(_x.getHeight()) - K * H};
-	_p = temp * _p;
+	_P = Matrix<scalar, size_type, nx, nx>::identity() - K * H * _P;
 }
 
 
-template <class scalar, class size_type>
-Matrix<scalar, size_type> EKF<scalar, size_type>::getState() const {
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+Matrix<scalar, size_type, nx, 1> EKF<scalar, size_type, nx, nu, nz>::x() const {
 	return _x;
 }
 
 
-template <class scalar, class size_type>
-Matrix<scalar, size_type> EKF<scalar, size_type>::getCovariance() const {
-	return _p;
+template <class scalar, class size_type, size_type nx, size_type nu, size_type nz>
+Matrix<scalar, size_type, nx, nx> EKF<scalar, size_type, nx, nu, nz>::P() const {
+	return _P;
 }
 
 #endif //FILTERS_EKF_HPP
